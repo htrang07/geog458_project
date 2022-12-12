@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+  <script src="http://d3js.org/d3.v5.min.js" type="text/JavaScript"></script>
+  <script src="index.js"></script>
+
+  <script src="http://d3js.org/d3.v5.min.js" charset="utf-8"></script>
+  <script src="https://unpkg.com/topojson@3.0.2/dist/topojson.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-legend/2.25.6/d3-legend.min.js"></script>
+  <!-- Add dashboard.css link -->
+  <link rel="stylesheet" href="css/Dashboard.css">
+  <!-- Add base.js line -->
+  <script src="js/base.js"></script>
+  <!-- Add sparkline.js link -->
+  <script src="js/sparkline.js"></script>
+
+  <!-- sidebar -->
+  <div id="info">
+   <div id="title">
+    Residential Permits Issued - Seattle
+   </div>
+   <p id="placename">Seattle, Washington</p>
+    <div id="count" class="card">
+     <h5 id="desc">Trang Ha, Gareth Jiang</h5>
+     <p id="county-count"></p>
+     <h5 id="desc"> Residential Permits since 2010 (value vs. net_unit)</h5>
+    </div>
+    <div id="scatterplot"></div>
+    <div id="footer">The scatter plot shows the correlation of value and net_unitis of the residential permits issued.
+      The map shows the location of the residential units. Each dot represents a single residential permit issued. Users can also hover the mouse over the dot to acquire information such as address, dwelling type, values, and net_units of any desired point.
+      The map also has zoom function, which allows the user to zoom in or out on specific area of the map.
+    </div>
+  </div>
+  <!-- mainwindow -->
+  <div id="map"></div>
+  <div id="tooltip"></div>
+  <script>
+  var mheight = 700;
+      var mwidth = 1000;
+      var projection = d3.geoMercator()
+      // var wa = void 0;
+
+  var path = d3.geoPath().projection(projection);
+  var svg = d3.select("#map")
+          .append("svg")
+          .attr("width", mwidth)
+          .attr("height", mheight - 1200);
+
+  var sparkline = d3.charts.sparkline()
+                       .height(260)
+                       .width(310);
+
+  // chart margin
+  var chartmargin = {top: 10, right: 30, bottom: 50, left: 70},
+  chartwidth = 400 - chartmargin.left - chartmargin.right,
+  chartheight = 400 - chartmargin.top - chartmargin.bottom;
+
+  // create chart svg element
+  var chart = d3.select("#scatterplot")
+      .append("svg")
+      .attr("width", chartwidth + chartmargin.left + chartmargin.right)
+      .attr("height", chartheight + chartmargin.top + chartmargin.bottom)
+      .append("g")
+      .attr("transform","translate(" + chartmargin.left + "," + chartmargin.top + ")");
+
+
+  // x scaleLinear
+  var x = d3.scaleLinear()
+            .domain([-272, 680])
+            .range([0, chartwidth]);
+
+  chart.append("g")
+       .attr("transform", "translate(10," + chartheight + ")")
+       .call(d3.axisBottom(x));
+
+  chart.append("text")
+       .attr("text-anchor", "end")
+       .attr("x", chartwidth - 150 )
+       .attr("y", chartheight + 35 )
+       .text("Net_Units");
+
+  // y scaleLinear
+  var y = d3.scaleLinear()
+            .domain([0, 270965923])
+            .range([chartheight, 0]);
+  chart.append("g")
+       .attr("transform", "translate(10 ,0)")
+       .call(d3.axisLeft(y));
+
+  chart.append("text")
+       .attr("text-anchor", "end")
+       .attr("transform", "rotate(-90)")
+       .attr("y", -60)
+       .attr("x", -150)
+       .text("Value");
+
+   d3.csv('data/Built_Units_Since_2010.csv').then (function(data) {
+     console.log("data", data);
+
+   chart.selectAll("circle")
+        .append("g")
+        .data(data)
+        .enter()
+        .append("circle")
+        .attr("cx", function (d) { return x(d.NET_UNITS); } )
+        .attr("cy", function (d) { return y(d.VALUE); } )
+        .attr("r", 2)
+        .attr("stroke", "orange")
+        .on("mouseover", hover);
+})
+
+
+
+ seattleMap = map();
+           // // map data
+           // d3.json('data/2010_Census_Tracts.geojson').then(function(data) {
+           //
+           // projection.scale(1).translate([0, 0]);
+           //     var b = path.bounds(data);
+           //     var s = .95 / Math.max((b[1][0] - b[0][0]) / mwidth, (b[1][1] -
+           // b[0][1]) / mheight);
+           //     var t = [(mwidth - s * (b[1][0] + b[0][0])) / 2, (mheight - s *
+           // (b[1][1] + b[0][1])) / 2+50];
+           //     projection.scale(s).translate(t);
+           //
+           //var map = svg.append('g').attr('class', 'boundary');
+           //     wa = map.selectAll('path').data(data.features);
+
+          //  wa.enter()
+          //       .append('path')
+          //       .attr('d', path)
+          //       .style('fill', 'grey')
+          //         });
+  </script>
+</body>
+</html>

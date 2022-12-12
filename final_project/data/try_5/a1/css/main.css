@@ -1,0 +1,20 @@
+#tooltip {
+       color: black;
+       background: white;
+       box-shadow: 0 2px 25px -10px rgba(0, 0, 0, 0.8);
+       padding: 10px;
+       position: absolute;
+       z-index: 10;
+       visibility: hidden;
+       white-space: nowrap;
+       pointer-events: none;
+     }
+ #tooltip th {
+       padding-right: 10px;
+       font-size: 10px;
+     }
+
+ #tooltip td {
+       font-size: 15px;
+       padding-right: 5px;
+     }
